@@ -19,7 +19,7 @@ import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
 import java.io.IOException;
-
+//851351531
 public class AnalyserActivity extends AppCompatActivity {
     private InputImage image;
     private String resultText;
