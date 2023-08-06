@@ -103,14 +103,14 @@ public class AnalyserActivity extends AppCompatActivity {
     }
 
 
-    private void getText(Text result){
+//    private void getText(Text result){
 //        String resultText = "";
 //        resultText = result.getText();
 //
 //        text.setText(resultText);
 //
 ////        Toast.makeText(AnalyserActivity.this, resultText, Toast.LENGTH_LONG).show();
-    }
+//    }
 
     private void setTextOnMainThread(String textValue) {
         runOnUiThread(new Runnable() {
