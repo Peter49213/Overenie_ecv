@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:background="@color/design_default_color_secondary"
+    android:paddingLeft="21dp"
+    android:paddingRight="21dp"
+    android:paddingBottom="11dp"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/edt_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:background="#fff"
+        android:padding="11dp"
+        android:hint="Zadajte meno"/>
+    <EditText
+        android:id="@+id/edt_surname"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:background="#fff"
+        android:padding="11dp"
+        android:hint="Zadajte priezvisko"/>
+    <EditText
+        android:id="@+id/edt_ECV"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:background="#fff"
+        android:padding="11dp"
+        android:hint="Zadajte EČV"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pridať"
+        android:id="@+id/Dialog_btnAdd"
+        android:layout_gravity="end"
+        android:layout_marginTop="11dp"/>
+
+</LinearLayout>

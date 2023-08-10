@@ -1,6 +1,9 @@
 package com.example.overenie_ecv;
 
+import static com.example.overenie_ecv.R.id.*;
+
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,8 +15,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Rational;
+import android.view.MenuItem;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -32,7 +37,13 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.overenie_ecv.databinding.ActivityMainBinding;
+import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,23 +56,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@ExperimentalCamera2Interop public class MainActivity extends AppCompatActivity {
+@ExperimentalCamera2Interop public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private OrientationEventListener orientationEventListener;
     private ImageCapture imageCapture;
     private ExecutorService cameraExecutor;
     private int screenRotation, orientation;
     public String fileName;
     private PreviewView viewFinder;
-    private DrawerLayout drawerLayout;
+    private DrawerLayout mDrawerLayout;
 
+    Button menu_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         com.example.overenie_ecv.databinding.ActivityMainBinding viewBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(viewBinding.getRoot());
-
-        drawerLayout = findViewById(R.id.drawer_layout);
-
+        menu_button = findViewById(R.id.menu_button);
+        mDrawerLayout = findViewById(drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(navigation_view);
+        navigationView.setNavigationItemSelectedListener(this);
         // Set up the listeners for take photo and video capture buttons
         viewBinding.imageCaptureButton.setOnClickListener(v -> takePhoto());
         viewFinder = findViewById(R.id.viewFinder);
@@ -78,15 +91,22 @@ import java.util.concurrent.Executors;
         Log.d("MainActivity", "orientationEventListener initialized");
         //gyro start measuring
 //        orientationEventListener.enable();
+
+
     }
 
     public void onMenuItemClicked(View view) {
         // Handle the menu item click here
         // For example, you can close the drawer after an item is clicked
-        drawerLayout.closeDrawers();
+        mDrawerLayout.closeDrawers();
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+    }
+
     protected void onResume() {
         super.onResume();
 
@@ -322,4 +342,15 @@ import java.util.concurrent.Executors;
                             }
                         }
                     });
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+        if (id == R.id.database){
+            startActivity(new Intent(this, Emplyees_database.class));
+        }
+        return false;
+    }
 }
