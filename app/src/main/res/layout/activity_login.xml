@@ -45,6 +45,7 @@
                 android:background="@drawable/custom_edittext"
                 android:layout_marginTop="40dp"
                 android:padding="8dp"
+                android:inputType="textPassword"
                 android:hint="Heslo"
                 android:drawableLeft="@drawable/baseline_lock_24"/>
             <Button

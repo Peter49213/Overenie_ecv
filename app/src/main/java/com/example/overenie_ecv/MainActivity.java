@@ -349,7 +349,7 @@ import java.util.concurrent.Executors;
 
         int id = item.getItemId();
         if (id == R.id.database){
-            startActivity(new Intent(this, Emplyees_database.class));
+            startActivity(new Intent(this, LoginActivity.class));
         }
         return false;
     }
