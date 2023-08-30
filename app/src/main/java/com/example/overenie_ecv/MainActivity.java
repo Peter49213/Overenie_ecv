@@ -25,12 +25,15 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
@@ -64,21 +67,27 @@ import java.util.concurrent.Executors;
     public String fileName;
     private PreviewView viewFinder;
     private DrawerLayout mDrawerLayout;
+    Toolbar toolbar;
+   private NavigationView navigationView;
 
     Button menu_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.example.overenie_ecv.databinding.ActivityMainBinding viewBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding viewBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(viewBinding.getRoot());
-        menu_button = findViewById(R.id.menu_button);
         mDrawerLayout = findViewById(drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(navigation_view);
-        navigationView.setNavigationItemSelectedListener(this);
         // Set up the listeners for take photo and video capture buttons
         viewBinding.imageCaptureButton.setOnClickListener(v -> takePhoto());
         viewFinder = findViewById(R.id.viewFinder);
+        navigationView =findViewById(R.id.nav);
 
+        setSupportActionBar(toolbar);
+        navigationView.bringToFront();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
         cameraExecutor = Executors.newSingleThreadExecutor();
         orientationEventListener = new OrientationEventListener(this) {
             @Override
@@ -95,7 +104,7 @@ import java.util.concurrent.Executors;
 
     }
 
-    public void onMenuItemClicked(View view) {
+    /*public void onMenuItemClicked(View view) {
         // Handle the menu item click here
         // For example, you can close the drawer after an item is clicked
         mDrawerLayout.closeDrawers();
@@ -105,7 +114,7 @@ import java.util.concurrent.Executors;
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     protected void onResume() {
         super.onResume();
@@ -217,8 +226,8 @@ import java.util.concurrent.Executors;
             }
 
             //Preview
-            androidx.camera.core.Preview.Builder previewBuilder = new androidx.camera.core.Preview.Builder();
-            androidx.camera.core.Preview preview = previewBuilder.setTargetAspectRatio(AspectRatio.RATIO_16_9)
+            Preview.Builder previewBuilder = new Preview.Builder();
+            Preview preview = previewBuilder.setTargetAspectRatio(AspectRatio.RATIO_16_9)
                     .build();
 
 
@@ -346,11 +355,13 @@ import java.util.concurrent.Executors;
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
         int id = item.getItemId();
-        if (id == R.id.database){
-            startActivity(new Intent(this, LoginActivity.class));
+        if (id == database){
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
-        return false;
+        if (id == logout){
+
+        }
+        return true;
     }
 }

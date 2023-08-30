@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/database"
-        android:title="Databáza">
-    </item>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/camera"
+            android:title="Kamera"
+            android:icon="@drawable/baseline_photo_camera_24"/>
+        <item
+            android:id="@+id/database"
+            android:title="Databáza"
+            android:icon="@drawable/baseline_data_object_24"/>
+    </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:title="profil">
+            <menu>
+                <item android:id="@+id/logout"
+                    android:title="Odhlásiť sa"
+                    android:icon="@drawable/baseline_logout_24"/>
+            </menu>
+        </item>
+    </group>
 </menu>
