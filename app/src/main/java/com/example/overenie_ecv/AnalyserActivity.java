@@ -62,7 +62,7 @@ public class AnalyserActivity extends AppCompatActivity {
                     if (employees != null){
                         String plate = employees.getPlate();
                         if (plate.equals(resultText)){
-                            owner.setText(employees.getName());
+                            owner.setText(employees.getName() + " " + employees.getSurname());
                         }
                         else {
                             owner.setText("cudzí");
