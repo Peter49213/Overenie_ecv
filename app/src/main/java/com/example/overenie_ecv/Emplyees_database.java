@@ -141,7 +141,6 @@ public class Emplyees_database extends AppCompatActivity implements NavigationVi
         });
 
     }
-
     @SuppressLint("UnsafeOptInUsageError")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -150,7 +149,6 @@ public class Emplyees_database extends AppCompatActivity implements NavigationVi
             startActivity(new Intent(Emplyees_database.this, MainActivity.class));
         }
         if (id == logout){
-            auth.signOut();
             startActivity(new Intent(Emplyees_database.this, LoginActivity.class));
         }
         return true;
