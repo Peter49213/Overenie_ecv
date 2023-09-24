@@ -2,12 +2,14 @@ package com.example.overenie_ecv;
 
 import static com.example.overenie_ecv.R.id.camera;
 import static com.example.overenie_ecv.R.id.database;
+import static com.example.overenie_ecv.R.id.drawer_layout;
 import static com.example.overenie_ecv.R.id.logout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +19,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -39,7 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Emplyees_database extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class Emplyees_database extends AppCompatActivity {
     DatabaseReference reference;
     RecyclerView recyclerView;
     ArrayList<Employees> list = new ArrayList<>();
@@ -51,6 +56,15 @@ public class Emplyees_database extends AppCompatActivity implements NavigationVi
     Toolbar toolbar;
     private NavigationView navigationView;
     ActionBarDrawerToggle toggle;
+    FirebaseAuth auth;
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (toggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -59,20 +73,38 @@ public class Emplyees_database extends AppCompatActivity implements NavigationVi
         setContentView(R.layout.activity_emplyees_database);
         recyclerView = findViewById(R.id.recyclerView);
         floatingActionButton = findViewById(R.id.FAB);
+        auth = FirebaseAuth.getInstance();
         mDrawerLayout = findViewById(R.id.drawer_layout);
         navigationView =findViewById(R.id.nav);
-        toolbar = findViewById(R.id.toolbar);
+        //toolbar = findViewById(R.id.toolbar);
         employeeAdapter = new EmployeeAdapter(list);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(employeeAdapter);
         reference = FirebaseDatabase.getInstance().getReference().child("Employees");
         toggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
+        //mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        setSupportActionBar(toolbar);
         navigationView.bringToFront();
-        navigationView.setNavigationItemSelectedListener(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @SuppressLint("UnsafeOptInUsageError")
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == camera){
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                    startActivity(new Intent(Emplyees_database.this, MainActivity.class));
+                }
+                if (id == logout){
+                    auth.signOut();
+                    startActivity(new Intent(Emplyees_database.this, LoginActivity.class));
+                    finish();
+                }
+                return true;
+            }
+        });
+
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,19 +123,24 @@ public class Emplyees_database extends AppCompatActivity implements NavigationVi
                         String plate_num = Plate.getText().toString();
                         String name = Name.getText().toString();
                         String surname = Surname.getText().toString();
+                        if (plate_num.isEmpty() || name.isEmpty() || surname.isEmpty()){
+                            Toast.makeText(Emplyees_database.this, "Vyplňte všwtky položky", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            HashMap<String , String> Map = new HashMap<>();
 
-                        HashMap<String , String> Map = new HashMap<>();
+                            Map.put("plate" ,plate_num);
+                            Map.put("name", name);
+                            Map.put("surname", surname);
 
-                        Map.put("plate" ,plate_num);
-                        Map.put("name", name);
-                        Map.put("surname", surname);
+                            reference.push().setValue(Map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(Emplyees_database.this, "Dáta boli uspešne uložené", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
 
-                        reference.push().setValue(Map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(Emplyees_database.this, "Data Saved", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                     }
                 });
                 dialog.show();
@@ -113,15 +150,15 @@ public class Emplyees_database extends AppCompatActivity implements NavigationVi
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 list.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    Employees employees = dataSnapshot.getValue(Employees.class);
+                for (DataSnapshot ds : snapshot.getChildren()){
+                    Employees employees = ds.getValue(Employees.class);
                     employees.setKey(snapshot.getKey());
                     list.add(employees);
                 }
                 if (list.isEmpty()){
                     AlertDialog.Builder builder = new AlertDialog.Builder(Emplyees_database.this);
                     builder.setTitle("Upozornenie");
-                    builder.setMessage("V zozname sa nenachádza žiadna položka");
+                    builder.setMessage("V zozname EČv sa nenachádza žiadna položka");
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -140,17 +177,5 @@ public class Emplyees_database extends AppCompatActivity implements NavigationVi
             }
         });
 
-    }
-    @SuppressLint("UnsafeOptInUsageError")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == camera){
-            startActivity(new Intent(Emplyees_database.this, MainActivity.class));
-        }
-        if (id == logout){
-            startActivity(new Intent(Emplyees_database.this, LoginActivity.class));
-        }
-        return true;
     }
 }

@@ -51,9 +51,9 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.MyView
                 alert.setPositiveButton("Ano", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        FirebaseDatabase.getInstance().getReference("Employees").child(employee.getKey()).removeValue();
+                        FirebaseDatabase.getInstance().getReference("Employees").child(employee.getSurname()).removeValue();
                         employees.remove(position);
-                        notifyItemRemoved(position);
+                        notifyDataSetChanged();
                     }
                 });
                 alert.setNegativeButton("Nie", new DialogInterface.OnClickListener() {

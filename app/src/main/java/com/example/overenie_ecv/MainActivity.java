@@ -37,11 +37,14 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.overenie_ecv.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -67,27 +70,47 @@ import java.util.concurrent.Executors;
     public String fileName;
     private PreviewView viewFinder;
     private DrawerLayout mDrawerLayout;
+    FirebaseAuth auth;
+    FirebaseUser user;
     Toolbar toolbar;
    private NavigationView navigationView;
+    ActionBarDrawerToggle toggle;
 
-    Button menu_button;
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (toggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityMainBinding viewBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(viewBinding.getRoot());
-        mDrawerLayout = findViewById(drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         // Set up the listeners for take photo and video capture buttons
         viewBinding.imageCaptureButton.setOnClickListener(v -> takePhoto());
         viewFinder = findViewById(R.id.viewFinder);
         navigationView =findViewById(R.id.nav);
-
-        setSupportActionBar(toolbar);
-        navigationView.bringToFront();
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
+        auth = FirebaseAuth.getInstance();
+        toggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == database){
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
+                return true;
+            }
+        });
+
         cameraExecutor = Executors.newSingleThreadExecutor();
         orientationEventListener = new OrientationEventListener(this) {
             @Override
@@ -352,15 +375,11 @@ import java.util.concurrent.Executors;
                         }
                     });
 
-    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == database){
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        }
-        if (id == logout){
-
+            startActivity(new Intent(MainActivity.this, Emplyees_database.class));
         }
         return true;
     }
